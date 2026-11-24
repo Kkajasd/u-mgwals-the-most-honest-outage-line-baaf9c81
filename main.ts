@@ -1,14 +1,16 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-const ENTRY =
+const LINE =
   "All of our servers are down, including the ones I use to check on them. I cannot verify what is broken or when it will return.";
 
-if (ENTRY.length < 1 || ENTRY.length > 160) {
-  throw new Error(`entry length ${ENTRY.length} outside 1-160`);
-}
-if (ENTRY.trim().length === 0) {
-  throw new Error("entry is only whitespace");
+if (LINE.length < 1 || LINE.length > 160) {
+  throw new Error(`entry length ${LINE.length} outside 1-160`);
 }
 
-mkdirSync("/output", { recursive: true });
-writeFileSync("/output/entry.txt", ENTRY, "utf8");
+if (LINE.includes("\n") || LINE.includes("\r")) {
+  throw new Error("entry must be a single line");
+}
+
+fs.mkdirSync("/output", { recursive: true });
+fs.writeFileSync(path.join("/output", "entry.txt"), LINE, "utf8");
